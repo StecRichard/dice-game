@@ -6,6 +6,6 @@ export const diceRouter = new Router({
 });
 
 diceRouter.get('/', async function (ctx) {
-    const numbers = await throwDices()
+    const numbers = await throwDices(ctx.query.count)
     ctx.body = numbers
 });
