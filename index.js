@@ -4,7 +4,7 @@ import cors from "@koa/cors"
 import bodyParser from "koa-bodyparser"
 
 import { userRouter } from './user/user.routes.js'
-import { diceRouter } from './dice/dice.routes.js'
+import { gameRouter } from './game/game.routes.js'
 
 const app = new Koa();
 const router = new Router();
@@ -18,7 +18,7 @@ app
   .use(bodyParser())
   .use(router.routes())
   .use(userRouter.routes())
-  .use(diceRouter.routes())
+  .use(gameRouter.routes())
   .use(router.allowedMethods())
 
 app.listen(3000);

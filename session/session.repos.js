@@ -1,7 +1,7 @@
 import { getDb } from '../db.js'
 
 export const sessionRepos = {
-    create: async (email) => {
+    create: async (username) => {
         const connection = await getDb()
         const collection = connection.collection('sessions')
         const sessionId = [...Array(50)].map(i => (~~(Math.random() * 36)).toString(36)).join('')
@@ -9,7 +9,7 @@ export const sessionRepos = {
         const insertStatus = (await collection.insertOne(
             {
                 sessionId: sessionId,
-                email
+                username
             }
         ));
 

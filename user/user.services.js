@@ -8,7 +8,7 @@ export const userServices = {
     register: async (params) => {
         const hash = await bcrypt.hash(params.password, 10)
 
-        const {password, ...paramsWithoutPassword} = params
+        const { password, ...paramsWithoutPassword } = params
         
         const user = await userRepos.create({
             ...paramsWithoutPassword,
@@ -16,16 +16,16 @@ export const userServices = {
         })
 
         if (user) {
-            return await sessionRepos.create(params.email)
+            return await sessionRepos.create(params.username)
         } else {
             return false
         }
-    },    
+    },
     login: async (params) => {
-        const user = await userRepos.findByEmail(params.email)
+        const user = await userRepos.findByUsername(params.username)
 
-        if (await bcrypt.compareSync(params.password, user.hash)) {
-            return await sessionRepos.create(params.email)
+        if (user && await bcrypt.compareSync(params.password, user.hash)) {
+            return await sessionRepos.create(params.username)
         } else {
             return false
         }
@@ -33,13 +33,13 @@ export const userServices = {
     me: async (sessionId) => {
         const session = await sessionRepos.findBySessionId(sessionId)
 
-        if(session){
-            const user = await userRepos.findByEmail(session.email)
-            const {hash, ...userWithoutHash} = user
-        
+        if (session) {
+            const user = await userRepos.findByUsername(session.username)
+            const { hash, ...userWithoutHash } = user
+
             return userWithoutHash
         } else {
-            return false 
+            return false
         }
     }
 }

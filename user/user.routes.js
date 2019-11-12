@@ -7,10 +7,11 @@ export const userRouter = new Router({
 });
 
 userRouter.post('/register', async function (ctx) {
-    const sessionId = await userServices.register(ctx.request.body) 
+    const sessionId = await userServices.register(ctx.request.body)
 
-    if(sessionId){
-        ctx.set('Set-Cookie', `sessionId=${sessionId}; Path=/`)   
+    if (sessionId) {
+        ctx.set('Set-Cookie', `sessionId=${sessionId}; Path=/`)
+        ctx.response.status = 201
     } else {
         ctx.response.status = 500
     }
@@ -19,8 +20,9 @@ userRouter.post('/register', async function (ctx) {
 userRouter.post('/login', async function (ctx) {
     const sessionId = await userServices.login(ctx.request.body)
 
-    if(sessionId){
-        ctx.set('Set-Cookie', `sessionId=${sessionId}; Path=/`)   
+    if (sessionId) {
+        ctx.set('Set-Cookie', `sessionId=${sessionId}; Path=/`)
+        ctx.response.status = 204
     } else {
         ctx.response.status = 500
     }
@@ -28,16 +30,25 @@ userRouter.post('/login', async function (ctx) {
 
 userRouter.delete('/logout', async function (ctx) {
     const sessionId = ctx.cookies.get('sessionId')
-    await sessionRepos.delete(sessionId)
+    const deleteResult = await sessionRepos.delete(sessionId)
+
+    if (deleteResult.deletedCount === 1) {
+        ctx.response.status = 204
+    } else {
+        ctx.response.status = 500
+    }
 });
 
 userRouter.get('/me', async function (ctx) {
     const sessionId = ctx.cookies.get('sessionId')
     const user = await userServices.me(sessionId)
 
-    if(user){
+    if (user) {
+        ctx.response.status = 200
         ctx.response.body = { user }
     } else {
         ctx.response.status = 401
-    }    
+    }
 });
+
+// TODO: EDIT USER
